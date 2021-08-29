@@ -4,7 +4,7 @@ from os import urandom
 from enum import Enum
 import bitstring
 
-#main types of WOTS defined fromt he ain paper
+#main types of WOTS defined from the paper paper
 class WinternizAlgorithm(Enum):
     LMOTS_SHA256_N32_W1 = object()
     LMOTS_SHA256_N32_W2 = object()
@@ -99,18 +99,16 @@ class Winterniz:
 #Algorithm 4: Verifying a Signature and Message Using a Public Key
 
         data_hash = self.hash(data)
-        # break the hash value into a bit stream so we can read w bits at a time into a uint value
         D_MESG = bitstring.ConstBitStream( data_hash)
         data_unit = "uint:{}".format(self._wtos_w)
         verify = []
-        # now we complete the hash operations so that in the end we end up with the same public key expected
+
         for i in range(self._wtos_p):
             verify_item = signature[i]
             hashItterateVal = D_MESG.read(D_MESG)
             for _ in range(hashItterateVal):
                 verify_item = self.hash(verify_item)
             verify.append(verify_item)
-        # return the result of the comparison of the verify list with the comparison public key
         return pub_key == verify
 
 
@@ -140,10 +138,13 @@ if __name__ == "__main__":
     print("\r\nMessage to sign:")
     print("m:\t\t{}".format(message))
     print("Hash(message)=\t{}".format(hex_encode(w.hash(message))))
+'''
 
+debging issue when I get round to it
     print("\r\n Signature:")
     sign = w.sign(priv, message)
     for j in range(len(pub)):
         print("Sig[{}]: {}".format(j, hex_encode(sign[j])))
 
     print("\r\nSIGNATURE_VALID: ", w.verify(sign, message, pub))
+'''
