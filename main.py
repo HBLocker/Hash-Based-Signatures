@@ -83,35 +83,34 @@ class Winterniz:
     def sign(self, private_Key, data):
 
         data_hash = self.hash(data)
-        D_MESG = bitstring.ConstBitStream( data_hash)
+        D_MESG = bitstring.ConstBitStream(data_hash)
         data_unit = "uint:{}".format(self._wtos_w)
         u32str = []
-        for i in range(self._wtos_p): # for ( i = 0; i < p; i = i + 1 ) {
-            temp = private_Key[i] #tmp X[i]
+        for i in range(self._wtos_p): 
+            temp = private_Key[i] 
             uint_val = D_MESG.read(data_unit)
             hash_iters = 2**self._wtos_w - uint_val
-            for _ in range(hash_iters): # for ( j = 0; j < a; j = j + 1 ) {
-                sig_item = self.hash(sig_item)
-            u32str.append(sig_item)
+            for _ in range(hash_iters): 
+                sig_item = self.hash(data)
+                u32str.append(sig_item)
         return u32str
 
     def verify(self, signature, data, Public_Key):
 #Algorithm 4: Verifying a Signature and Message Using a Public Key
 
         data_hash = self.hash(data)
-        D_MESG = bitstring.ConstBitStream( data_hash)
+        D_MESG = bitstring.ConstBitStream(data_hash)
         data_unit = "uint:{}".format(self._wtos_w)
+        data_unit = data_unit.strip()
         verify = []
-
         for i in range(self._wtos_p):
             verify_item = signature[i]
             hashItterateVal = D_MESG.read(D_MESG)
             for _ in range(hashItterateVal):
-                verify_item = self.hash(verify_item)
+                verify_item = self.hash(i)
             verify.append(verify_item)
-        return pub_key == verify
-
-
+            verify = Public_Key
+        return verify
 
 
 def hex_encode(data):
@@ -122,9 +121,7 @@ if __name__ == "__main__":
 
 
     message = b"this is a test message"
-
     w = Winterniz(alg_type=WinternizAlgorithm.LMOTS_SHA256_N32_W8)
-
     pub, priv = w.generate_key_pair()
 
     print("Private key:")
@@ -138,13 +135,11 @@ if __name__ == "__main__":
     print("\r\nMessage to sign:")
     print("m:\t\t{}".format(message))
     print("Hash(message)=\t{}".format(hex_encode(w.hash(message))))
-'''
 
-debging issue when I get round to it
+
     print("\r\n Signature:")
     sign = w.sign(priv, message)
-    for j in range(len(pub)):
-        print("Sig[{}]: {}".format(j, hex_encode(sign[j])))
-
-    print("\r\nSIGNATURE_VALID: ", w.verify(sign, message, pub))
-'''
+    print("Sig[{}]: {}".format(1, hex_encode(sign[1])))
+        #print("\r\nSIGNATURE_VALID: ", w.verify(sign, message, pub))
+      
+ 
